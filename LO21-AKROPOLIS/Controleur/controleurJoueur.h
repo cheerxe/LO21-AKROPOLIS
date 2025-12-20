@@ -11,6 +11,7 @@
 class IControleurJoueur {
 public:
     virtual ~IControleurJoueur() = default;
+    virtual void jouerTour(Cite& cite, size_t& pierres, Table chantier) = 0;
     virtual std::string getPseudo() const = 0;
 };
 

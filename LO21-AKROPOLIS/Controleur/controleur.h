@@ -43,31 +43,37 @@ private:
     }
 
     std::vector<IControleurJoueur*> creerControleurs() {
-        size_t nb_joueurs = dialogue->demanderNombreJoueurs(2, 4);
-
         std::vector<IControleurJoueur*> controleurs;
-        std::set<std::string> pseudos_pris; // pour savoir quel pseudo sont déjà pris par les autres joueurs
 
-        try {
-            for (size_t i = 0; i < nb_joueurs; ++i) {
-                std::string pseudo = dialogue->demanderPseudo(pseudos_pris, i + 1);
-                controleurs.push_back(new ControleurJoueurHumain(pseudo, dialogue));
+        bool mode_solo = dialogue->demanderModeSolo();
 
-                pseudos_pris.insert(pseudo);
-            }
-
-            if (nb_joueurs == 1) {
-                controleurs.push_back(new ControleurJoueurIA(dialogue));
-            }
-
-            return controleurs;
-
+        if (mode_solo) {
+            std::string pseudo = dialogue->demanderPseudo();
+            controleurs.push_back(new ControleurJoueurHumain(pseudo, dialogue));
+            //
         }
-        catch (...) {
-            for (IControleurJoueur* ctrl : controleurs) {
-                delete ctrl;
+
+        else {
+            size_t nb_joueurs = dialogue->demanderNombreJoueurs(2, 4);
+
+            std::set<std::string> pseudos_pris; // pour savoir quel pseudo sont déjà pris par les autres joueurs
+
+            try {
+                for (size_t i = 0; i < nb_joueurs; ++i) {
+                    std::string pseudo = dialogue->demanderPseudo(pseudos_pris, i + 1);
+                    controleurs.push_back(new ControleurJoueurHumain(pseudo, dialogue));
+
+                    pseudos_pris.insert(pseudo);
+                }
+
+                return controleurs;
             }
-            throw;
+            catch (...) {
+                for (IControleurJoueur* ctrl : controleurs) {
+                    delete ctrl;
+                }
+                throw;
+            }
         }
     }
 
@@ -123,8 +129,8 @@ public:
 
     void jouer() {
         dialogue->afficherEcranAccueil();
-        int choix = dialogue->demanderReprisePartie();
-        if (choix == 2) {
+        bool reprendre_partie = dialogue->demanderReprisePartie();
+        if (reprendre_partie) {
             auto chemin = Sauvegarde::recupererChemin();
             bool en_cours = Sauvegarde::partieEnCours(chemin);
             if (en_cours) {

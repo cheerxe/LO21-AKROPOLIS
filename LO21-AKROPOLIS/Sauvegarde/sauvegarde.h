@@ -5,7 +5,7 @@
 #include <fstream>
 
 namespace Sauvegarde {
-
+    /*
         namespace fichier = std::filesystem;
 
         fichier::path recupererChemin() {//fonction qui retourne le chemin ou seront stockees les donnes de la partie
@@ -387,7 +387,7 @@ namespace Sauvegarde {
                     serialize(c, out);//serialization de chacune des coordonnees du groupe courant
                 }
             }
-        }*/
+        }*//*
 
         //grilleHexa à ne pas deserializer car il n'existe aucun objet de ce type(virtuelle pure)
         void deserializeGroupeTuiles(std::ifstream& fic, std::vector<std::set<Coord>>& groupes) {
@@ -473,7 +473,7 @@ namespace Sauvegarde {
             deserialize(hex2, fic);
             deserialize(hex3, fic);
 
-            tuile = Tuile(hex1, hex2, hex3);*/
+            tuile = Tuile(hex1, hex2, hex3);*//*
         }
 
         Cite* deserializeCite(std::ifstream& fic) {
@@ -522,5 +522,5 @@ namespace Sauvegarde {
             }
             std::cerr << "erreur lors de l'ouverture du fichier ";
             return false;
-        }
+        }*/
     };

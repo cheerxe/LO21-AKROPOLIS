@@ -18,9 +18,11 @@ public:
     virtual void annoncerTourJoueur(const Joueur& j) const = 0;
 
     virtual void afficherEcranAccueil() const = 0;
-    virtual int demanderReprisePartie() const = 0;
+    virtual bool demanderReprisePartie() const = 0;
+    virtual bool demanderModeSolo() const = 0;
 
     virtual size_t demanderNombreJoueurs(size_t min, size_t max) const = 0;
+    virtual std::string demanderPseudo() const = 0;
     virtual std::string demanderPseudo(const std::set<std::string>& pseudos_existants, size_t ind) const = 0;
     virtual size_t demanderArchitecteChef(const std::set<std::string>& pseudos) const = 0;
 
@@ -73,14 +75,25 @@ public:
         DialogueUtilisateur::afficherMessage(ConsoleRendering::ecranAccueil());
     }
 
-    int demanderReprisePartie() const override {
+    bool demanderReprisePartie() const override {
         std::set<std::string> options = { "Lancer une nouvelle partie", "Essayer de reprendre une partie" };
         int choix = DialogueUtilisateur::demanderChoixDansMenu("", options);
+        return choix == 2;
+    }
+
+    bool demanderModeSolo() const override {
+        std::set<std::string> options = { "En mode Solo", "En Multijoueur" };
+        int choix = DialogueUtilisateur::demanderChoixDansMenu("Souhaitez-vous jouer ?", options);
+        return choix == 1;
     }
 
     size_t demanderNombreJoueurs(size_t min, size_t max) const override {
         std::string question = "\nCombien de joueurs pour cette partie ? (" + std::to_string(min) + "-" + std::to_string(max) + ") : ";
         return DialogueUtilisateur::demanderChoixNumerique(question, min, max);
+    }
+
+    std::string demanderPseudo() const override {
+        return DialogueUtilisateur::demanderTexte<std::string>("Entrez votre pseudo : ");
     }
 
     std::string demanderPseudo(const std::set<std::string>& pseudos_existants, size_t ind) const override {
