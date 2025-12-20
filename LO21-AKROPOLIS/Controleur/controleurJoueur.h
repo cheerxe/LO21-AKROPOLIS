@@ -2,20 +2,50 @@
 #include "../Partie/partie.h"
 #include "../Dialogue/dialogueStrategy.h"
 
-// Pour implémenter de nouvelles difficultés en mode solo on pourrait définir de vrais IA qui possède une cité 
-// et qui choisit et place selon un certain modèle la tuile dans sa cite.
 
-// Pour ce faire, on définit un controleur sur les actions du joueur, qui peut prendre la forme soit d'un 
-// controleur pour humain 
-
-class IControleurJoueur {
+class IControleurParticipant {
+    virtual const Tuile& choisirTuile(size_t& pierres, Table chantier) = 0;
 public:
-    virtual ~IControleurJoueur() = default;
-    virtual void jouerTour(Cite& cite, size_t& pierres, Table chantier) = 0;
+    virtual ~IControleurParticipant() = default;
     virtual std::string getPseudo() const = 0;
+    // Implémentation de l'interface parent (délégation)
+    virtual void jouerTour(Table& chantier) = 0;
 };
 
+
+class ControleurIllustreArchitecte : public IControleurParticipant {
+    const Tuile& choisirTuile(size_t& pierres, Table chantier) {
+        // A ECRIRE SELON LES REGLES PLACES ET MOINS CHER
+    }
+public:
+    void jouerTour(Table& chantier) override {
+        // A ECRIRE AUSSI
+    }
+
+    std::string getPseudo() const override {
+        return "Illustre Architecte";
+    }
+};
+
+// Pour implémenter de nouvelles difficultés en mode solo on pourrait définir de vrais IA qui possède une cité 
+// et qui choisisse et place selon un certain modèle la tuile dans sa cite.
+
+// Pour ce faire, on définit un controleur (IControleurJoueur) pour les actions d'un "joueur" qui possède une Cite (pas un Illustre Architecte)
+// qui peut prendre la forme soit d'un controleur pour humain (ControleurJoueurHumain), soit d'un controleur pour IA (
+
+
 // Pas l'Illustre Architecte
+class IControleurJoueur : public IControleurParticipant {
+    const Tuile& choisirTuile(size_t& pierres, Table chantier) const
+public:
+    virtual ~IControleurJoueur() = default;
+    virtual void jouerTour(Cite& cite, size_t& pierres, Table& chantier) = 0;
+
+    // Implémentation de l'interface parent (délégation)
+    void jouerTour(Table& chantier) override = 0; // Sera implémentée par Joueur
+};
+
+
 class ControleurJoueurHumain : public IControleurJoueur {
 private:
     IDialogueStrategy* dialogue;
@@ -52,6 +82,11 @@ public:
             recommencer = dialogue->demanderAnnulation();
             if (recommencer) cite.retirerTuile(niveau_choisi, centre, orient);
         }
+    }
+
+    void jouerTour(Table& chantier) override {
+        // Cette version ne sera jamais appelée directement
+        // Elle existe pour satisfaire l'interface mais sera surchargée par Joueur
     }
 
     std::string getPseudo() const override { return pseudo; }

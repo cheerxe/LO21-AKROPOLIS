@@ -1,5 +1,5 @@
 #pragma once
-#include "../Joueur/Joueur.h"
+#include "../Joueur/joueur.h"
 #include "dialogueUtilisateur.h"
 #include "../Affichage/affichageTuile.h"
 #include "../Affichage/affichageGrille.h"
@@ -14,8 +14,9 @@ public:
     virtual void afficherGrille(const GrilleHexa& grille) const = 0;
     virtual void afficherGrille(const GrilleHexa_Plate& grille) const = 0;
     virtual void annoncerNouvelleManche() const = 0;
-    virtual void afficherArchitecte(const Joueur& archi) const = 0;
-    virtual void annoncerTourJoueur(const Joueur& j) const = 0;
+    virtual void afficherArchitecte(const IParticipant& archi) const = 0;
+    virtual void annoncerTourIParticipant(const IParticipant& j) const = 0;
+    virtual void annoncerFinPartie() const = 0;
 
     virtual void afficherEcranAccueil() const = 0;
     virtual bool demanderReprisePartie() const = 0;
@@ -63,12 +64,16 @@ public:
         DialogueUtilisateur::afficherDansBanderole("Nouvelle Manche");
     }
 
-    void afficherArchitecte(const Joueur& archi) const override {
+    void afficherArchitecte(const IParticipant& archi) const override {
         DialogueUtilisateur::afficherMessage("\nArchitecte en chef : " + archi.getPseudo());
     }
 
-    void annoncerTourJoueur(const Joueur& j) const override {
+    void annoncerTourIParticipant(const IParticipant& j) const override {
         DialogueUtilisateur::afficherDansBande(j.getPseudo());
+    }
+
+    void annoncerFinPartie() const override {
+        DialogueUtilisateur::afficherDansBanderole("Fin de la partie");
     }
 
     void afficherEcranAccueil() const override {
@@ -97,7 +102,7 @@ public:
     }
 
     std::string demanderPseudo(const std::set<std::string>& pseudos_existants, size_t ind) const override {
-        DialogueUtilisateur::afficherDansBande("Joueur " + std::to_string(ind));
+        DialogueUtilisateur::afficherDansBande("IParticipant " + std::to_string(ind));
         std::string pseudo;
         do {
             pseudo = DialogueUtilisateur::demanderTexte<std::string>("Entrez votre pseudo : ");

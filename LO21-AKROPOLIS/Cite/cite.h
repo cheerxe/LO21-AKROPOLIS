@@ -1,18 +1,8 @@
 #pragma once
 #include "../grilleHexa/grilleHexa.h"
 
-class CiteAbstract {
-public :
-	virtual ~CiteAbstract() = 0;
-};
 
-class CiteIA : public CiteAbstract {
-	std::vector<Hexagone> grille;
-public:
-	void placerTuile(Tuile& t) { grille.emplace_back(t.getHex1()); grille.emplace_back(t.getHex2()); grille.emplace_back(t.getHex3());}
-};
-
-class Cite : public CiteAbstract {
+class Cite {
 	GrilleHexa_Niv1 niv1;
 	std::vector<GrilleHexa_NivPlus*> niveaux;
 	// Grille pour l'affichage de la cité vue du dessus (la seule à attribuer des niveaux aux hexagones)

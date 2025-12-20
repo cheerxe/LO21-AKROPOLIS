@@ -14,7 +14,6 @@ public:
     void pushTuile(const Tuile* t);
 };
 
-
 class Pioche {
 private:
     std::vector<const Tas*> tas;

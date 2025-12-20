@@ -72,7 +72,7 @@ namespace GrilleRendering {
 
         os << " " << std::string(larg_grille, '=') << "\n";
     }
-
+    
     // Surcharge de fonction pour afficher spécifiquement des Hexagones_Affichages
     inline void afficherGrilleBase(std::ostream& os, const GrilleHexa_Plate& grille, const std::set<Coord>* positions_mises_en_evidence = nullptr) {
         Coord min_coord = grille.minCoord();
