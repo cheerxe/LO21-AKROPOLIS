@@ -204,13 +204,23 @@ namespace DialogueUtilisateur {
         return *it;
     }
 
-    // Afficher un message simple
     inline void afficherMessage(const std::string& message) {
         std::cout << message << std::endl;
     }
 
-    // Afficher un message d'erreur
-    inline void afficherErreur(const std::string& erreur) {
-        std::cerr << "Erreur : " << erreur << std::endl;
+    inline void afficherErreur(const std::string& message) {
+        std::string yellow = ConsoleRendering::codeAnsi(Couleur::Jaune), reset = ConsoleRendering::codeAnsi(Couleur::Reset);
+        std::cout << yellow << "\n< " << message << " >\n" << reset << std::endl;
+    }
+
+    inline void afficherDansBanderole(const std::string& message) {
+        std::cout << "\n" << std::string(120, '=') << std::endl;
+        std::cout << std::string(50, ' ') << message << std::endl;
+        std::cout << std::string(120, '=') << std::endl;
+    }
+
+    inline void afficherDansBande(const std::string& message) {
+        std::string space = std::string((120 - message.size()) / 2, ' ');
+        std::cout << "\n" << std::string(50, '=') << space << message << space << std::string(50, '=') << std::endl;
     }
 }

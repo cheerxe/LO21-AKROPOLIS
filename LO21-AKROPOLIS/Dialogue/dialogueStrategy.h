@@ -7,16 +7,22 @@
 class IDialogueStrategy {
 public:
     virtual ~IDialogueStrategy() = default;
+
+    virtual void afficherMessage(const std::string& message) const = 0;
+    virtual void afficherErreur(const std::string& message) const = 0;
+    virtual void afficherTuile(const Tuile& t) const = 0;
+    virtual void afficherGrille(const GrilleHexa& grille) const = 0;
+    virtual void afficherGrille(const GrilleHexa_Plate& grille) const = 0;
+    virtual void afficherNouvelleManche() const = 0;
+    virtual void afficherArchitecte(const Joueur& archi) const = 0;
+    virtual void annoncerTourJoueur(const Joueur& j) const = 0;
+
     virtual void afficherEcranAccueil() const = 0;
     virtual int demanderReprisePartie() const = 0;
 
     virtual size_t demanderNombreJoueurs(size_t min, size_t max) const = 0;
-    virtual std::string demanderPseudo(const std::set<std::string>& pseudos_existants) const = 0;
+    virtual std::string demanderPseudo(const std::set<std::string>& pseudos_existants, size_t ind) const = 0;
     virtual size_t demanderArchitecteChef(const std::set<std::string>& pseudos) const = 0;
-
-    virtual void afficherMessage(const std::string& message) const = 0;
-    virtual void afficherErreur(const std::string& message) const = 0;
-    virtual void afficherTuile(const Tuile& tuile) const = 0;
 
     virtual size_t demanderTuileDansChantier(const std::vector<Tuile>& chantier, size_t pierres) const = 0;
 
@@ -31,20 +37,43 @@ public:
 
 class DialogueConsole : public IDialogueStrategy {
 public:
-    void afficherMessage(const std::string& message) const {
+    void afficherMessage(const std::string& message) const override {
         DialogueUtilisateur::afficherMessage(message);
     }
 
-    void afficherErreur(const std::string& message) const {
-        std::string yellow = ConsoleRendering::codeAnsi(Couleur::Jaune), reset = ConsoleRendering::codeAnsi(Couleur::Reset);
-        DialogueUtilisateur::afficherMessage(yellow + "\n< " + message + " >\n" + reset);
+    void afficherErreur(const std::string& message) const override {
+        DialogueUtilisateur::afficherErreur(message);
     }
 
-    void afficherEcranAccueil() const {
+    void afficherTuile(const Tuile& t) const override {
+        TuileRendering::afficherTuile(t);
+    }
+
+    void afficherGrille(const GrilleHexa& grille) const override {
+        GrilleRendering::afficherGrille(grille);
+    }
+
+    void afficherGrille(const GrilleHexa_Plate& grille) const override {
+        GrilleRendering::afficherGrille(grille);
+    }
+
+    void afficherNouvelleManche() const override {
+        DialogueUtilisateur::afficherDansBanderole("Nouvelle Manche");
+    }
+
+    void afficherArchitecte(const Joueur& archi) const override {
+        DialogueUtilisateur::afficherMessage("\nArchitecte en chef : " + archi.getPseudo());
+    }
+
+    void annoncerTourJoueur(const Joueur& j) const override {
+        DialogueUtilisateur::afficherDansBande(j.getPseudo());
+    }
+
+    void afficherEcranAccueil() const override {
         DialogueUtilisateur::afficherMessage(ConsoleRendering::ecranAccueil());
     }
 
-    int demanderReprisePartie() const {
+    int demanderReprisePartie() const override {
         std::set<std::string> options = { "Lancer une nouvelle partie", "Essayer de reprendre une partie" };
         int choix = DialogueUtilisateur::demanderChoixDansMenu("", options);
     }
@@ -54,7 +83,8 @@ public:
         return DialogueUtilisateur::demanderChoixNumerique(question, min, max);
     }
 
-    std::string demanderPseudo(const std::set<std::string>& pseudos_existants) const override {
+    std::string demanderPseudo(const std::set<std::string>& pseudos_existants, size_t ind) const override {
+        DialogueUtilisateur::afficherDansBande("Joueur " + std::to_string(ind));
         std::string pseudo;
         do {
             pseudo = DialogueUtilisateur::demanderTexte<std::string>("Entrez votre pseudo : ");

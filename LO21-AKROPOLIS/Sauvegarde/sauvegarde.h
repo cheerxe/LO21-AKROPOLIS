@@ -1,29 +1,29 @@
 #pragma once
+#pragma warning(disable: 4996)
 #include "../Partie/partie.h"
 #include <cstdlib>
 #include <fstream>
 
-#ifdef _WIN32//le prepocesseur regarde si la macro WIN32 caracterisant l OS windows existe ou non(teste si on est sous windows)
-    const char* appdata = std::getenv("APPDATA");
-    if (appdata and strlen(appdata))
-    chemin = std::getenv("APPDATA");//chemin ou on stocke classiquement les data des applications sous windows obtenu grace a la var d envirronement APPDATA
-    else
-    chemin = fichier::current_path();//chemin vers l executable
-#else//pour les autres macros detectess = systeme mac ou linux
-//leur var d envirronement pour ce chemin est nomme HOME
-    const char* home = std::getenv("HOME");
-    if (home and strlen(home))
-    chemin = std::getenv("HOME");
-    else
-    chemin = fichier::current_path();
-#endif
-
-    namespace Sauvegarde {
+namespace Sauvegarde {
 
         namespace fichier = std::filesystem;
 
         fichier::path recupererChemin() {//fonction qui retourne le chemin ou seront stockees les donnes de la partie
             fichier::path chemin;//objet qui contient le chemin ou stocker le fichier
+#ifdef _WIN32//le prepocesseur regarde si la macro WIN32 caracterisant l OS windows existe ou non(teste si on est sous windows)
+            const char* appdata = std::getenv("APPDATA");
+            if (appdata and strlen(appdata))
+                chemin = std::getenv("APPDATA");//chemin ou on stocke classiquement les data des applications sous windows obtenu grace a la var d envirronement APPDATA
+            else
+                chemin = fichier::current_path();//chemin vers l executable
+#else//pour les autres macros detectess = systeme mac ou linux
+            //leur var d envirronement pour ce chemin est nomme HOME
+            const char* home = std::getenv("HOME");
+            if (home and strlen(home))
+                chemin = std::getenv("HOME");
+            else
+                chemin = fichier::current_path();
+#endif
             chemin /= "Akropolys"; //l operateur /= est surcharge dans la bibliotheque filesystem et permet d'etendre le chemin 
             fichier::create_directories(chemin);//creerts les dossiers intermediaire pour la premiere fois
             chemin /= "akropolis.bin";

@@ -1,11 +1,11 @@
 #pragma once
 #include "../Partie/partie.h"
+#include "../Jeu/jeu.h"
 #include "../Sauvegarde/sauvegarde.h"
 
 class ControleurPartie {
 private:
     Partie* partie;
-    
     IDialogueStrategy* dialogue;
 
     // Création de la partie
@@ -16,6 +16,7 @@ private:
 
         std::vector<Joueur*> joueurs;
         Pioche* pioche = nullptr;
+        Table* chantier = nullptr;
 
         try {
             // Créer les joueurs avec leurs contrôleurs
@@ -23,9 +24,13 @@ private:
                 joueurs.push_back(new Joueur(controleur));
             }
 
+            Jeu& jeu = Jeu::getInstance(joueurs.size());
+
             pioche = new Pioche();
 
-            return new Partie(joueurs, pioche);
+            chantier = new Table(joueurs.size(), jeu.getReservoir());
+
+            return new Partie(joueurs, pioche, chantier);
 
         }
         catch (...) {
@@ -45,16 +50,14 @@ private:
 
         try {
             for (size_t i = 0; i < nb_joueurs; ++i) {
-                dialogue->afficherMessage("\n============ Joueur " + std::to_string(i + 1) + " ============");
-
-                std::string pseudo = dialogue->demanderPseudo(pseudos_pris);
+                std::string pseudo = dialogue->demanderPseudo(pseudos_pris, i + 1);
                 controleurs.push_back(new ControleurJoueurHumain(pseudo, dialogue));
 
                 pseudos_pris.insert(pseudo);
             }
 
             if (nb_joueurs == 1) {
-                controleurs.push_back(new ControleurJoueurHumain( dialogue));
+                controleurs.push_back(new ControleurJoueurIA(dialogue));
             }
 
             return controleurs;
@@ -69,25 +72,22 @@ private:
     }
 
     void initialiserPartie() {
-        // Créer les contrôleurs de joueurs
         std::vector<IControleurJoueur*> controleurs = creerControleurs();
 
-        // Créer la partie avec ces contrôleurs
         partie = creerPartie(controleurs);
 
-        // Choisir l'architecte chef
         std::set<std::string> pseudos = partie->getPseudosJoueurs();
         size_t indice_architecte = dialogue->demanderArchitecteChef(pseudos);
         partie->setArchitecteChef(indice_architecte);
     }
 
     void jouerManche() {
-        dialogue->afficherMessage("\n=== Nouvelle Manche ===");
-        dialogue->afficherMessage("Architecte en chef : " + partie->getArchitecteChef()->getPseudo());
+        dialogue->afficherNouvelleManche();
+        dialogue->afficherArchitecte(*partie->getArchitecteChef());
 
         // L'architecte chef commence
         size_t indice_debut = partie->getIndiceArchitecteChef();
-        Table chantier = partie->chantier;
+        Table chantier = *partie->chantier;
 
         for (size_t i = 0; i < partie->getNbJoueurs(); ++i) {
             size_t indice = (indice_debut + i) % partie->getNbJoueurs();
@@ -97,6 +97,16 @@ private:
 
         // Changer d'architecte chef pour la prochaine manche
         partie->passerArchitecteChefSuivant();
+    }
+
+    void afficherResultats() {
+        dialogue->afficherMessage("\n=== Fin de la partie ===");
+
+        for (size_t i = 0; i < partie->getNbJoueurs(); ++i) {
+            const Joueur* joueur = partie->getJoueur(i);
+            // int score = calculerScore(joueur->getCite());
+            dialogue->afficherMessage(joueur->getPseudo() + " : [score]");
+        }
     }
 
 public:
@@ -116,40 +126,33 @@ public:
         int choix = dialogue->demanderReprisePartie();
         if (choix == 2) {
             auto chemin = Sauvegarde::recupererChemin();
-
-            if (partieEnCours(chemin)) {
+            bool en_cours = Sauvegarde::partieEnCours(chemin);
+            if (en_cours) {
                 dialogue->afficherMessage("\nReprise de la partie en cours ...");
-                reprendrePartie(chemin);
+                Sauvegarde::reprendrePartie(chemin);
             }
             else {
                 dialogue->afficherErreur("\nIl n'y a pas de partie en cours. Lancement de la nouvelle partie ...");
+                initialiserPartie();
             }
         }
+        else {
+            dialogue->afficherMessage("\nLancement de la nouvelle partie ...");
+            initialiserPartie();
+        }
 
-
-        initialiserPartie();
         partie->demarrer();
 
-        while (partie->estEnCours() && !partie->getPioche()->estVide()) {
-            jouerManche();
+        while (!partie->getPioche()->estVide()) {
+                jouerManche();
         }
-
         partie->terminer();
-        afficherResultats();
-    }
-
-    void afficherResultats() {
-        dialogue->afficherMessage("\n=== Fin de la partie ===");
-
-        for (size_t i = 0; i < partie->getNbJoueurs(); ++i) {
-            const Joueur* joueur = partie->getJoueur(i);
-            // int score = calculerScore(joueur->getCite());
-            dialogue->afficherMessage(joueur->getPseudo() + " : [score]");
-        }
     }
 };
 
-void lancerPartie(IDialogueStrategy dialogue) {
+
+
+void lancerPartie(IDialogueStrategy& dialogue) {
     ControleurPartie controleur(&dialogue);
     controleur.jouer();
 }

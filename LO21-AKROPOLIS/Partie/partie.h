@@ -35,6 +35,7 @@ private:
     Pioche* pioche;
     Table* chantier;
     size_t indice_architecte_chef;
+    bool en_cours;
 
 public:
     // Constructeur prenant les joueurs déjà créés
@@ -88,47 +89,6 @@ public:
     }
 
 
-    bool partieEnCours(fichier::path chemin) {
-        std::ifstream fic(chemin, std::ios::binary);
-        if (fic) {
-            bool en_cours;
-            fic.read(reinterpret_cast<char*>(&en_cours), sizeof(en_cours));
-            return en_cours;
-        }
-        std::cerr << "erreur lors de l'ouverture du fichier ";
-        return false;
-    }
-
-    void reprendrePartie(fichier::path chemin) {//reprendre une partie qui avait été mise en pause avec deserialisation
-
-        if (chemin.empty()) {
-            std::cerr << "chemin ouverture fichier vide";
-            return;
-        }
-        std::ifstream fic(chemin, std::ios::binary);
-
-        if (!fic) {//ereur ouverture du fichier
-            std::cerr << "erreur lors de l ouverture du fichier ";
-            return;
-        }
-
-        std::vector<char> buffer;//vector pour stocker les donnees lues
-        fic.seekg(0, std::ios::end);//positionner le curseur a la fin du fichier
-        size_t taille_fichier = fic.tellg();//recuperer la taille en bits du fichiers
-        fic.seekg(0, std::ios::beg);//reposition deu curseur au tout debut du fichier
-
-        buffer.resize(taille_fichier);
-        fic.read(buffer.data(), taille_fichier);//on mets toute le contenu d fichier dans le vector buffer
-
-        //recreation des joueur, de leur cite, des elements de leurs cite via boucle for et deserialize
-        // recreer les tuiles
-        // recreer le chantier
-        //ensuite jouerManche
-
-        fic.close();
-    }
-
-    // ---- Mutations (logique métier) ----
     void demarrer() {
         if (en_cours) {
             throw std::logic_error("La partie est déjà en cours");
