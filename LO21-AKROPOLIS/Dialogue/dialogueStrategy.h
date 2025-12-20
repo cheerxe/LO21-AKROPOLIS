@@ -1,5 +1,5 @@
 #pragma once
-#include "../Cite/cite.h"
+#include "../Joueur/Joueur.h"
 #include "dialogueUtilisateur.h"
 #include "../Affichage/affichageTuile.h"
 #include "../Affichage/affichageGrille.h"
@@ -13,7 +13,7 @@ public:
     virtual void afficherTuile(const Tuile& t) const = 0;
     virtual void afficherGrille(const GrilleHexa& grille) const = 0;
     virtual void afficherGrille(const GrilleHexa_Plate& grille) const = 0;
-    virtual void afficherNouvelleManche() const = 0;
+    virtual void annoncerNouvelleManche() const = 0;
     virtual void afficherArchitecte(const Joueur& archi) const = 0;
     virtual void annoncerTourJoueur(const Joueur& j) const = 0;
 
@@ -57,7 +57,7 @@ public:
         GrilleRendering::afficherGrille(grille);
     }
 
-    void afficherNouvelleManche() const override {
+    void annoncerNouvelleManche() const override {
         DialogueUtilisateur::afficherDansBanderole("Nouvelle Manche");
     }
 

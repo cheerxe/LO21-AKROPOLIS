@@ -142,6 +142,7 @@
     <ClInclude Include="Cite\cite.h" />
     <ClInclude Include="Controleur\controleur.h" />
     <ClInclude Include="Controleur\controleurJoueur.h" />
+    <ClInclude Include="couleur.h" />
     <ClInclude Include="Dialogue\dialogueStrategy.h" />
     <ClInclude Include="Dialogue\dialogueUtilisateur.h" />
     <ClInclude Include="exception.h" />

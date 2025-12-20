@@ -8,6 +8,7 @@
 #include "Pioche/pioche.h"
 #include "Dialogue/dialogueStrategy.h"
 #include "Partie/partie.h"
+//#include "Controleur/controleur.h"
 
 int main()
 {

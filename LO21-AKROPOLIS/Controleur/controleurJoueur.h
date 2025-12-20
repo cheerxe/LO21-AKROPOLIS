@@ -1,6 +1,12 @@
 #pragma once
-#include "../Cite/cite.h"
+#include "../Partie/partie.h"
 #include "../Dialogue/dialogueStrategy.h"
+
+// Pour implémenter de nouvelles difficultés en mode solo on pourrait définir de vrais IA qui possède une cité 
+// et qui choisit et place selon un certain modèle la tuile dans sa cite.
+
+// Pour ce faire, on définit un controleur sur les actions du joueur, qui peut prendre la forme soit d'un 
+// controleur pour humain 
 
 class IControleurJoueur {
 public:
@@ -15,13 +21,15 @@ private:
     std::string pseudo;
 
     const Tuile& choisirTuile(size_t& pierres, Table chantier) {
-        size_t choix_tuile = dialogue->demanderTuileDansChantier(chantier, pierres);
+        std::vector<Tuile> vect_tuile;
+        for (size_t i = 0; i < chantier.taille(); i++) vect_tuile.emplace_back(*chantier.regarder(i));
+        size_t choix_tuile = dialogue->demanderTuileDansChantier(vect_tuile, pierres);
         pierres -= choix_tuile;
         return *chantier.prendre(choix_tuile);
     }
 
 public:
-    ControleurJoueurHumain(const std::string& p, IDialogueStrategy* d) : pseudo(p) {}
+    ControleurJoueurHumain(const std::string& p, IDialogueStrategy* d) : pseudo(p), dialogue(d) {}
 
     void jouerTour(Cite& cite, size_t& pierres, Table chantier) {
         int recommencer = 1;

@@ -12,7 +12,7 @@ public:
     Table(size_t nb_joueurs, std::vector<const Tuile*> res);
     size_t taille() const { return visibles.size(); }
     bool estVide() const { return visibles.empty(); }
-    size_t cout(size_t i) const { return i; } // ???????????????????
+    size_t cout(size_t i) const { return i; } // ?????????????????
     const Tuile* prendre(size_t i);
     const Tuile* regarder(size_t i) const;
     void recharger(Pioche& p);
@@ -29,6 +29,8 @@ private:
 
 };
 
+// PROBLEME A REGLER : JOUEURS N'EST PAS INITIALISE ("'Partie::joueurs' : impossible d'initialiser le membre") -> ca fait buguer tout le reste
+
 class Partie {
 private:
     std::vector<Joueur*> joueurs;
@@ -37,7 +39,7 @@ private:
     size_t indice_architecte_chef;
     bool en_cours;
 
-public:
+public: 
     // Constructeur prenant les joueurs déjà créés
     Partie(std::vector<Joueur*> joueurs_init, Pioche* pioche_init, Table* table_init) : joueurs(joueurs_init), pioche(pioche_init), 
         chantier(table_init), indice_architecte_chef(0), en_cours(false) {
@@ -88,6 +90,9 @@ public:
         return pseudos;
     }
 
+    const Table* getChantier() const { return chantier; }
+    Table* getChantier() { return chantier; }
+
 
     void demarrer() {
         if (en_cours) {
@@ -114,12 +119,5 @@ public:
         joueurs[indice_architecte_chef]->setArchitecteChef(true);
     }
 
-    // Logique métier d'une manche (sans interaction utilisateur)
-    void executerManche(Table& chantier) {
-        // Logique pure : 
-        // - Piocher les tuiles nécessaires
-        // - Distribuer aux joueurs
-        // - etc.
-        // SANS demander quoi que ce soit à l'utilisateur
-    }
+    
 };

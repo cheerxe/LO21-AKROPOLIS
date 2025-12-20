@@ -6,6 +6,8 @@
 #include <set>
 #include <limits>
 #include "../exception.h"
+#include "../couleur.h"
+#include "../Affichage/affichageConsole.h"
 
 
 namespace DialogueUtilisateur {
@@ -223,4 +225,4 @@ namespace DialogueUtilisateur {
         std::string space = std::string((120 - message.size()) / 2, ' ');
         std::cout << "\n" << std::string(50, '=') << space << message << space << std::string(50, '=') << std::endl;
     }
-}
+};

@@ -1,12 +1,12 @@
 #pragma once
 #include "../exception.h"
+#include "../couleur.h"
 #include <cstddef>
 #include <string>
 #include <vector>
 #include <iostream>
 
 
-enum class Couleur { Rouge, Vert, Bleu, Jaune, Violet, Gris, Cyan, Reset };
 enum class TypeQuartier { Habitation, Marche, Caserne, Temple, Jardin };
 enum class TypeHexagone { Carriere, Quartier, Place1, Place2, Place3, None };
 enum class NbEtoiles { une = 1, deux = 2, trois = 3 };

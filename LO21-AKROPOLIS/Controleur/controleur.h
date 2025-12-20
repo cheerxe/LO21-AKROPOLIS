@@ -82,17 +82,17 @@ private:
     }
 
     void jouerManche() {
-        dialogue->afficherNouvelleManche();
+        dialogue->annoncerNouvelleManche();
         dialogue->afficherArchitecte(*partie->getArchitecteChef());
 
         // L'architecte chef commence
         size_t indice_debut = partie->getIndiceArchitecteChef();
-        Table chantier = *partie->chantier;
+        Table chantier = *partie->getChantier();
 
         for (size_t i = 0; i < partie->getNbJoueurs(); ++i) {
             size_t indice = (indice_debut + i) % partie->getNbJoueurs();
             Joueur* joueur = partie->getJoueur(indice);
-            joueur->jouerTour(tuile);
+            joueur->jouerTour(chantier);
         }
 
         // Changer d'architecte chef pour la prochaine manche

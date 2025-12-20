@@ -1,4 +1,5 @@
 #pragma once
+#include "../Cite/cite.h"
 #include "../Controleur/controleurJoueur.h"
 
 class Joueur {
@@ -9,7 +10,7 @@ private:
     bool est_architecte_chef;
 
 public:
-    Joueur(IControleurJoueur* ctrl) : controleur(ctrl), est_architecte_chef(false), pierres(0) {}
+    Joueur(IControleurJoueur* ctrl) : cite(), controleur(ctrl), est_architecte_chef(false), pierres(0) {}
 
     ~Joueur() {
         delete controleur;
@@ -19,7 +20,7 @@ public:
     Joueur(const Joueur&) = delete;
     Joueur& operator=(const Joueur&) = delete;
 
-    void jouerTour() { controleur->jouerTour(cite); }
+    void jouerTour(Table chantier) { controleur->jouerTour(cite, pierres, chantier); }
 
     std::string getPseudo() const { return controleur->getPseudo(); }
 
