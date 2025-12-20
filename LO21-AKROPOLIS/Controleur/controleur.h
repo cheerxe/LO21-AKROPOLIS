@@ -18,7 +18,7 @@ private:
     void afficherResultats();
 
 public:
-    ControleurPartie(IDialogueStrategy* d): partie(nullptr), dialogue(d) {}
+    ControleurPartie(IDialogueStrategy* d) : partie(nullptr), dialogue(d) {}
 
     ~ControleurPartie() { delete partie; }
 

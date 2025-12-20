@@ -31,12 +31,12 @@ public:
 // et qui choisisse et place selon un certain modèle la tuile dans sa cite.
 
 // Pour ce faire, on définit un controleur (IControleurJoueur) pour les actions d'un "joueur" qui possède une Cite (pas un Illustre Architecte)
-// qui peut prendre la forme soit d'un controleur pour humain (ControleurJoueurHumain), soit d'un controleur pour IA (
+// qui peut prendre la forme soit d'un controleur pour humain (ControleurJoueurHumain), soit d'un controleur pour IA (ControleurJoueurIA)
 
 
 // Pas l'Illustre Architecte
 class IControleurJoueur : public IControleurParticipant {
-    const Tuile& choisirTuile(size_t& pierres, Table chantier) const
+    const Tuile& choisirTuile(size_t& pierres, Table chantier) const;
 public:
     virtual ~IControleurJoueur() = default;
     virtual void jouerTour(Cite& cite, size_t& pierres, Table& chantier) = 0;
@@ -93,7 +93,6 @@ public:
 };
 
 
-// Illustre Architecte
 class ControleurJoueurIA : public IControleurJoueur {
 private:
 

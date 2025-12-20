@@ -1,6 +1,5 @@
 #pragma once
 #include "../Joueur/joueur.h"
-#include <set>
 
 // PROBLEME A REGLER : JOUEURS N'EST PAS INITIALISE ("'Partie::joueurs' : impossible d'initialiser le membre") -> ca fait buguer tout le reste
 
