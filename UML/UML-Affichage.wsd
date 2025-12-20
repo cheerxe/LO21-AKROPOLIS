@@ -1,0 +1,60 @@
+@startuml Affichage Console Détaillé
+
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+namespace ConsoleRendering {
+  class Utilities <<namespace>> {
+      + LARG_CONTENU : size_t = 8
+      + LARG_HEXAGONE : size_t = 12
+      --
+      + codeAnsi(c: Couleur) : string
+      + justify(contenu: string, largeur: size_t) : string
+      + gras() : string
+      + inverseVideo() : string
+      + reset() : string
+  }
+}
+    
+namespace TuileRendering {
+    class Functions <<namespace>> {
+      + getContenu(const Hexagone&) : string
+      + getContenuAvecNiveau(const HexagoneAffichage& hex) : string
+      + afficherTuile(Tuile&)
+      + afficherTousSens(Tuile&, int orientation) 
+    }
+  }
+
+  namespace GrilleRendering {
+    class Functions <<namespace>> {
+      + afficherGrilleBase(std::ostream& os, const GrilleHexa& grille, 
+          const std::set<Coord>* positions_mises_en_evidence = nullptr)
+      afficherGrille(grille: GrilleHexa&, 
+          positions_mises_en_evidence: set<Coord>*)
+      + afficherPositionsPossibles(GrilleHexa&, 
+          const std::set<Coord>& positions, size_t niveau)
+      + afficherOrientationsPossibles(grille: GrilleHexa&, 
+          const Coord& centre, const std::set<int>& orientations, size_t niveau)
+    }
+  }
+
+' Dépendances entre namespaces
+ConsoleRendering --+ TuileRendering : uses
+ConsoleRendering --+ GrilleRendering : uses
+
+' Classes du modèle
+package "Modèle" {
+  class Tuile
+  class Hexagone
+  class GrilleHexa
+  class Coord
+}
+
+' Utilisation
+TuileRendering ...> Tuile
+TuileRendering ...> Hexagone
+GrilleRendering ...> GrilleHexa
+GrilleRendering ...> Hexagone
+GrilleRendering ...> Coord
+
+@enduml

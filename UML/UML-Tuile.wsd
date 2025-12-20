@@ -1,0 +1,79 @@
+@startuml
+
+enum Couleur {
+    Bleu
+    Jaune
+    Rouge
+    Violet
+    Vert
+    Gris
+    Cyan
+    Reset 
+}
+
+enum Type_Quartier {
+    Habitation
+    Marche
+    Caserne
+    Temple
+    Jardin
+}
+
+note bottom : fonction get_Couleur(Type_Quartier)\n lien très fort
+
+enum TypeHexagone {
+    Carriere
+    Quartier
+    Place1
+    Place2
+    Place3
+    None
+}
+
+class Hexagone {
+  - Couleur couleur
+  - TypeHexagone type
+  + Hexagone(Couleur c, TypeHexagone t)
+  + getCouleur() : Couleur const 
+  + getType() : TypeHexagone const
+}
+
+class Quartier {
+  - TypeQuartier type_quartier;
+  + Quartier(TypeQuartier t)
+}
+class Carriere {
+  + Carriere()
+}
+class Place {
+    - TypeQuartier type_quartier;
+    - NbEtoiles nb_etoiles
+    - {static} typeFromEtoiles(NbEtoiles e) : TypeHexagone
+    + Place(TypeQuartier t, NbEtoiles e)
+}
+
+class HexagoneAffichage {
+    - size_t niv
+    + HexagoneAffichage(size_t niv)
+    + HexagoneAffichage(size_t niv, const Hexagone& h)
+    + getNiv() : string const
+}
+
+class Tuile {
+    - const Hexagone hex1
+    - const Hexagone hex2
+    - const Hexagone hex3
+    + Tuile(const Hexagone& h1, const Hexagone& h2, const Hexagone& h3)
+    + getHexa1() : const Hexagone&
+    + getHexa2() : const Hexagone&
+    + getHexa3() : const Hexagone&
+    + getHexagonesDansSens(size_t sens) : std::vector<const Hexagone*> const
+}
+
+Hexagone <|-- Quartier
+Hexagone <|-- Carriere
+Hexagone <|-- Place
+HexagoneAffichage -|> Hexagone
+Tuile "1" --o "3" Hexagone
+
+@enduml

@@ -1,0 +1,130 @@
+@startuml UML3_GrilleHexa_Cite_Joueur
+
+struct Coord {
+    + q: int
+    + r: int
+    + operator<(other: Coord): bool
+    + operator==(other: Coord): bool
+}
+
+abstract class GrilleHexa {
+    # grille: map<Coord, Hexagone>
+    - {static} directions(): vector<pair<int, int>>
+    + GrilleHexa()
+    + GrilleHexa(g: GrilleHexa)
+    + operator=(g: GrilleHexa): GrilleHexa
+    + ~GrilleHexa()
+    + minCoord(): Coord
+    + maxCoord(): Coord
+    + getGrille(): map<Coord, Hexagone>
+    + getGrille(): map<Coord, Hexagone>
+    + estLibre(c: Coord): bool
+    + {static} calculerPositionsTuile(centre: Coord, orientation: int): vector<Coord>
+    + placerTuile(tuile: Tuile, centre: Coord, orientation: int, sens: size_t): void
+    + retirerTuile(c1: Coord, c2: Coord, c3: Coord): void
+}
+
+abstract class GrilleHexa_Niveau {
+    - groupes_tuiles: vector<set<Coord>>
+    + GrilleHexa_Niveau()
+    + {abstract} peutPlacerTuile(centre: Coord, orientation: int): bool
+    + {abstract} toutesPositionsValides(): set<Coord>
+    + {abstract} toutesOrientationsValides(centre: Coord): set<int>
+    + memeTuile(a: Coord, b: Coord, c: Coord): bool
+    + placerTuile(tuile: Tuile, centre: Coord, orientation: int, sens: size_t): void
+    + retirerTuile(c1: Coord, c2: Coord, c3: Coord): void
+    + getGroupesTuiles(): vector<set<Coord>>
+}
+
+class GrilleHexa_Niv1 {
+    - initialiserGrilleDeBase(): void
+    + GrilleHexa_Niv1()
+    + peutPlacerTuile(centre: Coord, orientation: int): bool
+    + toutesPositionsValides(): set<Coord>
+    + toutesOrientationsValides(centre: Coord): set<int>
+}
+
+class GrilleHexa_NivPlus {
+    - grille_precedente: GrilleHexa_Niveau*
+    + GrilleHexa_NivPlus(precedente: GrilleHexa_Niveau*)
+    + peutPlacerTuile(centre: Coord, orientation: int): bool
+    + toutesPositionsValides(): set<Coord>
+    + toutesOrientationsValides(centre: Coord): set<int>
+    + getGrillePrecedente(): GrilleHexa*
+}
+
+class GrilleHexa_Plate {
+    + GrilleHexa_Plate()
+    + placerHexagone(centre: Coord, hex: Hexagone): void
+}
+
+class Cite {
+    - niv1: GrilleHexa_Niv1
+    - niveaux: vector<GrilleHexa_NivPlus*>
+    - grille_plate: GrilleHexa_Plate
+    - niveauSupPossible(): bool
+    - tousNiveauxDisponibles(): set<size_t>
+    + Cite()
+    + ~Cite()
+    + getGrille(): GrilleHexa_Plate
+    + getNiveauxDisponibles(): set<size_t>
+    + getPositionsValides(niv: size_t): set<Coord>
+    + getOrientationsPossibles(centre: Coord, niv: size_t): set<int>
+    + placerTuile(t: Tuile, niv: size_t, centre: Coord, orientation: int, sens: size_t): void
+    + retirerTuile(niv: size_t, centre: Coord, orientation: int): void
+    + getGrilleHexaPlate(): GrilleHexa_Plate
+    + getGrilleHexaNiv1(): GrilleHexa_Niv1
+    + getNiveaux(): vector<GrilleHexa_NivPlus*>
+}
+
+abstract class IParticipant {
+    # controleur: IControleurParticipant*
+    + IParticipant(ctrl: IControleurParticipant*)
+    + ~IParticipant()
+    + {abstract} jouerTour(chantier: Table): void
+    + getPseudo(): string
+    + {abstract} estJoueurHumain(): bool
+}
+
+class Joueur {
+    - cite: Cite
+    - pierres: size_t
+    + Joueur(ctrl: IControleurJoueur*)
+    + jouerTour(chantier: Table): void
+    + estJoueurHumain(): bool
+    + getCite(): Cite
+    + getPierres(): size_t
+}
+
+class IllustreArchitecte {
+    - tuiles_collectees: vector<Tuile*>
+    + IllustreArchitecte(ctrl: IControleurParticipant*)
+    + jouerTour(chantier: Table): void
+    + estJoueurHumain(): bool
+    + getTuiles(): vector<Tuile*>
+    + ~IllustreArchitecte()
+}
+
+GrilleHexa <|-- GrilleHexa_Niveau
+GrilleHexa <|-- GrilleHexa_Plate
+GrilleHexa_Niveau <|-- GrilleHexa_Niv1
+GrilleHexa_Niveau <|-- GrilleHexa_NivPlus
+
+GrilleHexa o-- "*" Coord
+GrilleHexa o-- "*" Hexagone
+
+GrilleHexa_NivPlus o-- "1" GrilleHexa_Niveau
+
+
+Cite *-- "1" GrilleHexa_Niv1
+Cite *-- "1" GrilleHexa_Plate
+Cite *-- "*" GrilleHexa_NivPlus
+
+IParticipant <|-- Joueur
+IParticipant <|-- IllustreArchitecte
+IParticipant o-- "1" IControleurParticipant
+
+Joueur *-- "1" Cite
+IllustreArchitecte o-- "*" Tuile
+
+@enduml

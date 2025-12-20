@@ -1,0 +1,80 @@
+@startuml UML2_Jeu_Pioche_Partie
+
+class Jeu {
+    - nb_tuiles: size_t
+    - tuiles: vector<Tuile>
+    - {static} instance: Jeu*
+    - Jeu(nb_joueur: size_t)
+    + getNbTuiles(): size_t
+    + getTuile(i: size_t): Tuile
+    + getReservoir(): vector<Tuile*>
+    + {static} getInstance(nb_joueur: size_t): Jeu
+    + instancierTuiles(nbjoueurs: size_t): void
+    + ~Jeu()
+}
+
+class Pioche {
+    - tas: vector<Tas*>
+    - curseur: vector<size_t>
+    + Pioche()
+    + ~Pioche()
+    + ajouterTas(t: Tas*): void
+    + estVide(): bool
+    + piocherDepuisTas(i: size_t): Tuile*
+    + prendreIndiceTasNonVide(): int
+    + getTasPioche(): vector<Tas*>
+    + getCurseur(): vector<size_t>
+}
+
+class Table {
+    - capacite: size_t
+    - visibles: vector<Tuile*>
+    - reservoir: vector<Tuile*>
+    + Table(nb_joueurs: size_t, res: vector<Tuile*>)
+    + taille(): size_t
+    + estVide(): bool
+    + cout(i: size_t): size_t
+    + prendre(i: size_t): Tuile*
+    + regarder(i: size_t): Tuile*
+    + recharger(p: Pioche): void
+    + getCapacite(): size_t
+    + tailleReservoir(): size_t
+    + tailleR(): size_t
+    - remplirDepuisReservoir(): void
+    - remplirDepuisReservoirOuTas(p: Pioche): void
+    - regleUneTuileRestante(p: Pioche): void
+}
+
+class Partie {
+    - joueurs: vector<Joueur*>
+    - pioche: Pioche*
+    - chantier: Table*
+    - indice_architecte_chef: size_t
+    - en_cours: bool
+    + Partie(joueurs_init: vector<Joueur*>, pioche_init: Pioche*, table_init: Table*)
+    + ~Partie()
+    + getNbJoueurs(): size_t
+    + getJoueur(indice: size_t): Joueur*
+    + getJoueur(indice: size_t): Joueur*
+    + getArchitecteChef(): Joueur*
+    + getArchitecteChef(): Joueur*
+    + getIndiceArchitecteChef(): size_t
+    + getPioche(): Pioche*
+    + getPioche(): Pioche*
+    + getPseudosJoueurs(): set<string>
+    + getChantier(): Table*
+    + getChantier(): Table*
+    + demarrer(): void
+    + terminer(): void
+    + setArchitecteChef(indice: size_t): void
+    + passerArchitecteChefSuivant(): void
+}
+
+Jeu o-- "*" Tuile
+Table o-- "*" Tuile
+Pioche o-- "*" Tas
+Partie *-- "1" Pioche
+Partie *-- "1" Table
+Partie o-- "*" Joueur
+
+@enduml
