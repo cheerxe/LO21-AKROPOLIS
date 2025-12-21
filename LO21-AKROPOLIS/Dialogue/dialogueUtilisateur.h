@@ -1,14 +1,12 @@
-ï»¿#pragma once
+#pragma once
 
 #include <iostream>
-#include <sstream> // ajoutï¿½
+#include <sstream> // ajouté
 #include <string>
 #include <set>
+#include <algorithm>
 #include <limits>
-#include "../exception.h"
-#include "../couleur.h"
-#include "../Affichage/affichageConsole.h"
-
+#include "../Exception.h"
 
 namespace DialogueUtilisateur {
     // Gestion des erreurs de buffer
@@ -38,20 +36,9 @@ namespace DialogueUtilisateur {
         std::cout << "\n";
     }
 
+    // Question dans Menu
     template<typename T>
-    void afficherMenu(const std::vector<T>& options) {
-        size_t i = 1;
-        for (auto it = options.begin(); it != options.end(); ++it, ++i) {
-            std::ostringstream ss;
-            ss << i << ". " << *it;
-            std::cout << "\n" << ss.str();
-        }
-        std::cout << "\n";
-    }
-
-    // demanderInformation RenommÃ©e en demanderTexte
-    template<typename T>
-    T demanderTexte(const std::string& question) {
+    T demanderInformation(const std::string& question) {
         T choix;
         while (true) {
             std::cout << question;
@@ -59,7 +46,7 @@ namespace DialogueUtilisateur {
 
             if (std::cin.fail()) {
                 gestionErreurBuffer();
-                std::cout << "Choix invalide. Veuillez reessayer : ";
+                std::cout << "Choix invalide. Veuillez rééssayer : ";
             }
             else {
                 return choix;
@@ -67,7 +54,7 @@ namespace DialogueUtilisateur {
         }
     }
 
-    // Question avec choix numï¿½rique dans un intervalle
+    // Question avec choix numérique dans un intervalle
     template<typename T>
     T demanderChoixNumerique(const std::string& question, T min, T max) {
         T choix;
@@ -90,9 +77,9 @@ namespace DialogueUtilisateur {
     T demanderChoixParmi(const std::string& question, const std::set<T>& options) {
         if (options.empty()) throw AkropolisException("Ensemble d'options vide", "DialogueUtilisateur");
 
-        std::string select;
-        if (options.size() == 2) {
-            select = " entre " + std::to_string(*(options.begin())) + " ou " + std::to_string(*(++options.begin())) + " : ";
+        std::string select; 
+		if (options.size() == 2) {
+			select = " entre " + std::to_string(*(options.begin())) + " ou " + std::to_string(*(++options.begin())) + " : ";
         }
         else {
             select = " parmi ";
@@ -113,7 +100,7 @@ namespace DialogueUtilisateur {
 
             if (std::cin.fail() || options.find(choix) == options.end()) {
                 gestionErreurBuffer();
-                std::cout << "Veuillez entrer un element" << select << ".\n";
+                std::cout << "Veuillez entrer un élément" << select << ".\n";
             }
             else {
                 return choix;
@@ -142,7 +129,7 @@ namespace DialogueUtilisateur {
 
     // Question dans Menu
     template<typename T>
-    size_t demanderChoixDansMenu(const std::string& question, const std::set<T>& options) {
+    int demanderChoixDansMenu(const std::string& question, const std::set<T>& options) {
         int choix;
         size_t n = options.size();
         while (true) {
@@ -151,27 +138,7 @@ namespace DialogueUtilisateur {
             std::cout << "\nChoix : ";
             std::cin >> choix;
 
-            if (std::cin.fail() || choix < 1 || choix > n) {
-                gestionErreurBuffer();
-                std::cout << "Choix invalide. Veuillez entrez un nombre entre 1 et " << n << " : ";
-            }
-            else {
-                return choix;
-            }
-        }
-    }
-
-    template<typename T>
-    size_t demanderChoixDansMenu(const std::string& question, const std::vector<T>& options) {
-        int choix;
-        size_t n = options.size();
-        while (true) {
-            std::cout << question;
-            afficherMenu(options);
-            std::cout << "\nChoix : ";
-            std::cin >> choix;
-
-            if (std::cin.fail() || choix < 1 || choix > n) {
+            if (std::cin.fail() || choix < 1 || choix > n ) {
                 gestionErreurBuffer();
                 std::cout << "Choix invalide. Veuillez entrez un nombre entre 1 et " << n << " : ";
             }
@@ -190,15 +157,15 @@ namespace DialogueUtilisateur {
 
             if (std::cin.fail() || (reponse != 1 && reponse != 0)) {
                 gestionErreurBuffer();
-                std::cout << "Veuillez repondre par '1' ou '0'.\n";
+                std::cout << "Veuillez répondre par '1' ou '0'.\n";
             }
             else {
-                return reponse;
+				return reponse;
             }
         }
     }
 
-    // Obtenir la valeur ï¿½ partir de l'index
+    // Obtenir la valeur à partir de l'index
     template<typename T>
     T obtenirValeurParIndex(const std::set<T>& options, size_t index) {
         auto it = options.begin();
@@ -206,23 +173,35 @@ namespace DialogueUtilisateur {
         return *it;
     }
 
+    // Afficher un message simple
     inline void afficherMessage(const std::string& message) {
         std::cout << message << std::endl;
     }
 
-    inline void afficherErreur(const std::string& message) {
-        std::string yellow = ConsoleRendering::codeAnsi(Couleur::Jaune), reset = ConsoleRendering::codeAnsi(Couleur::Reset);
-        std::cout << yellow << "\n< " << message << " >\n" << reset << std::endl;
+    // Afficher un message d'erreur
+    inline void afficherErreur(const std::string& erreur) {
+        std::cerr << "Erreur : " << erreur << std::endl;
     }
 
-    inline void afficherDansBanderole(const std::string& message) {
-        std::cout << "\n" << std::string(120, '=') << std::endl;
-        std::cout << std::string(50, ' ') << message << std::endl;
-        std::cout << std::string(120, '=') << std::endl;
-    }
+    inline std::string demanderPseudoValide(const std::set<std::string>& pseudos_existants, const std::string& message) {
+        std::string pseudo;
+        while (true) {
+            std::cout << message;
+            std::cin >> pseudo;
 
-    inline void afficherDansBande(const std::string& message) {
-        std::string space = std::string((120 - message.size()) / 2, ' ');
-        std::cout << "\n" << std::string(50, '=') << space << message << space << std::string(50, '=') << std::endl;
+            if (pseudo.empty()) {
+                std::cout << "Le pseudo ne peut pas etre vide.\n";
+                continue;
+            }
+            if (!std::all_of(pseudo.begin(), pseudo.end(), [](unsigned char c) { return std::isalpha(c); })) {
+                std::cout << "Le pseudo ne doit contenir que des lettres.\n";
+                continue;
+            }
+            if (pseudos_existants.count(pseudo)) {
+                std::cout << "Ce pseudo est deja pris.\n";
+                continue;
+            }
+            return pseudo;
+        }
     }
-};
+}
