@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="LO21-AKROPOLIS/LO21-AKROPOLIS.vcxproj" />
+  <Project Path="LO21-AKROPOLIS/LO21-AKROPOLIS.vcxproj" Id="de75bed6-538f-4739-9bcd-42bca4b38b12" />
 </Solution>

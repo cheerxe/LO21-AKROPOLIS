@@ -1,13 +1,20 @@
 #pragma once
-#include "../Partie/partie.h"
+#include "../Score/score_registry.h"
+#include "../Jeu/jeu.h"
 #include "../Sauvegarde/sauvegarde.h"
+
+
+// Comment générer le Score ?
+
+class Partie;
+class IDialogueStrategy;
 
 class ControleurPartie {
 private:
     Partie* partie;
     IDialogueStrategy* dialogue;
 
-    Partie* creerPartie(const std::vector<IParticipant*>& participants);
+    Partie* creerPartie(const std::vector<IParticipant*>& participants, ModeScore mode);
 
     std::vector<IParticipant*> creerParticipants();
 

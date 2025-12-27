@@ -1,5 +1,8 @@
 #pragma once
-#include "../Pioche/pioche.h"
+#include <vector>
+
+class Tuile;
+class Pioche;
 
 class Table {
 private:

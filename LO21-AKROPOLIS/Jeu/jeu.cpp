@@ -1,4 +1,5 @@
 #include "jeu.h"
+#include "../Tuile/tuile.h"
 
 Jeu& Jeu::getInstance(size_t nb_joueur) {
 	if (instance == nullptr) { instance = new Jeu(nb_joueur); } //seul moyen d'appeler le constructeur
@@ -75,7 +76,6 @@ void Jeu::instancierTuiles(size_t nbjoueurs) {//creer les tuiles du jeu en fonct
 	Carriere q23;
 	Place q24(TypeQuartier::Habitation, NbEtoiles::une);
 	tuiles.emplace_back(q22, q23, q24);
-	//																enum class TypeQuartier { Habitation, Marche, Caserne, Temple, Jardin };
 
 	Quartier q25(TypeQuartier::Temple);
 	Carriere q26;

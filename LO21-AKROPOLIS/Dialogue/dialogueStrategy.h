@@ -1,7 +1,6 @@
 #pragma once
 #include "../Joueur/joueur.h"
 #include "dialogueUtilisateur.h"
-#include "../Affichage/affichageTuile.h"
 #include "../Affichage/affichageGrille.h"
 
 class IDialogueStrategy {
@@ -17,6 +16,7 @@ public:
     virtual void afficherArchitecte(const IParticipant& archi) const = 0;
     virtual void annoncerTourIParticipant(const IParticipant& j) const = 0;
     virtual void annoncerFinPartie() const = 0;
+    virtual void annoncerAffichageScore() const = 0;
 
     virtual void afficherEcranAccueil() const = 0;
     virtual bool demanderReprisePartie() const = 0;
@@ -36,6 +36,8 @@ public:
     virtual int demanderOrientation(const Coord& centre, const std::set<int>& orient_possible, size_t niv, const GrilleHexa_Plate& grille_affichage) const = 0; 
     virtual size_t demanderSens(const Tuile& tuile, int orientation) const = 0;
     virtual int demanderAnnulation() const = 0;
+    virtual int demanderModeScore() const = 0;
+    virtual void afficherScore(const IParticipant& p, const ScoreBreakdown& score) const = 0;
 };
 
 class DialogueConsole : public IDialogueStrategy {
@@ -74,6 +76,10 @@ public:
 
     void annoncerFinPartie() const override {
         DialogueUtilisateur::afficherDansBanderole("Fin de la partie");
+    }
+
+    void annoncerAffichageScore() const override {
+        DialogueUtilisateur::afficherDansBanderole("Resultats - Score");
     }
 
     void afficherEcranAccueil() const override {
@@ -184,8 +190,26 @@ public:
         return DialogueUtilisateur::demanderConfirmation("Souhaitez-vous changer d'avis et recommencer votre manche ?");
     }
 
-    void afficherEtatActuelCite(const Cite& c) {
+    void afficherEtatActuelCite(const Cite& c) const override {
         DialogueUtilisateur::afficherMessage("\n" + std::string(30, '*') + " Etat actuel de la cite : " + std::string(30, '*') + "\n");
         GrilleRendering::afficherGrille(c.getGrille());
+    }
+
+    int demanderModeScore() const override {
+        DialogueUtilisateur::afficherDansBanderole("Selection du mode de Score");
+        std::vector<std::string> options { "Classique", "Variante", "Personnel" };
+        return DialogueUtilisateur::demanderChoixDansMenu("", options);
+    }
+
+    void afficherScore(const IParticipant& p, const ScoreBreakdown& score) const override {
+        DialogueUtilisateur::afficherDansBanderole(p.getPseudo());
+        DialogueUtilisateur::afficherMessage("- Habitations : " + score.hab);
+        DialogueUtilisateur::afficherMessage("- Marches : " + score.mar);
+        DialogueUtilisateur::afficherMessage("- Casernes : " + score.cas);
+        DialogueUtilisateur::afficherMessage("- Temples : " + score.tem);
+        DialogueUtilisateur::afficherMessage("- Jardins : " + score.jar);
+        DialogueUtilisateur::afficherMessage("- Pierres : " + score.stones);
+        DialogueUtilisateur::afficherMessage("- TOTAL : " + score.total);
+        DialogueUtilisateur::afficherMessage("\n");
     }
 };

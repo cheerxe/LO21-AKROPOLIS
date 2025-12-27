@@ -5,10 +5,10 @@
 #include <string>
 #include <set>
 #include <limits>
-#include "../exception.h"
 #include "../couleur.h"
 #include "../Affichage/affichageConsole.h"
 
+class AkropolisException;
 
 namespace DialogueUtilisateur {
     // Gestion des erreurs de buffer

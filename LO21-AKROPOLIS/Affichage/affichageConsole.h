@@ -1,5 +1,5 @@
 #pragma once
-#include "../Tuile/tuile.h" // pour les Couleurs
+#include "../couleur.h"
 
 namespace ConsoleRendering {
     constexpr size_t LARG_CONTENU = 8;

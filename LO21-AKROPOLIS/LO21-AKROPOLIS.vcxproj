@@ -129,11 +129,15 @@
   <ItemGroup>
     <ClCompile Include="Cite\cite.cpp" />
     <ClCompile Include="Controleur\controleur.cpp" />
+    <ClCompile Include="Controleur\controleurJoueur.cpp" />
     <ClCompile Include="grilleHexa\grilleHexa.cpp" />
     <ClCompile Include="Jeu\jeu.cpp" />
+    <ClCompile Include="Joueur\joueur.cpp" />
     <ClCompile Include="LO21-AKROPOLIS.cpp" />
     <ClCompile Include="Partie\partie.cpp" />
     <ClCompile Include="Pioche\pioche.cpp" />
+    <ClCompile Include="Score\score.cpp" />
+    <ClCompile Include="Table\table.cpp" />
     <ClCompile Include="Tuile\tuile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +157,8 @@
     <ClInclude Include="Partie\partie.h" />
     <ClInclude Include="Pioche\pioche.h" />
     <ClInclude Include="Sauvegarde\sauvegarde.h" />
+    <ClInclude Include="Score\score.h" />
+    <ClInclude Include="Score\score_registry.h" />
     <ClInclude Include="Table\table.h" />
     <ClInclude Include="Tuile\tuile.h" />
   </ItemGroup>

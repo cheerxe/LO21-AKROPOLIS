@@ -1,6 +1,9 @@
 #include "controleur.h"
+#include "../Table/table.h"
+#include "../Pioche/pioche.h"
+#include "../Dialogue/dialogueStrategy.h"
 
-Partie* ControleurPartie::creerPartie(const std::vector<IParticipant*>& participants) {
+Partie* ControleurPartie::creerPartie(const std::vector<IParticipant*>& participants, ModeScore mode) {
     if (participants.empty()) {
         throw AkropolisException("Il faut au moins un participant", "ControleurPartie");
     }
@@ -9,17 +12,11 @@ Partie* ControleurPartie::creerPartie(const std::vector<IParticipant*>& particip
     Table* chantier = nullptr;
 
     try {
-        // Compter les joueurs humains pour initialiser le jeu
-        size_t nb_joueurs_humains = 0;
-        for (IParticipant* p : participants) {
-            if (p->estJoueurHumain()) nb_joueurs_humains++;
-        }
-
         Jeu& jeu = Jeu::getInstance(participants.size());
         pioche = new Pioche();
         chantier = new Table(participants.size(), jeu.getReservoir());
 
-        return new Partie(participants, pioche, chantier);
+        return new Partie(participants, pioche, chantier, mode);
     }
     catch (...) {
         delete pioche;
@@ -34,40 +31,26 @@ std::vector<IParticipant*> ControleurPartie::creerParticipants() {
 
     try {
         if (mode_solo) {
-            // Mode Solo : 1 joueur humain + Illustre Architecte
             std::string pseudo = dialogue->demanderPseudo();
             participants.push_back(
-                new Joueur(new ControleurJoueurHumain(pseudo, dialogue))
+                new Joueur(new ControleurJoueur(pseudo, dialogue))
             );
-            participants.push_back(
-                new IllustreArchitecte(new ControleurIllustreArchitecte())
-            );
+            participants.push_back(new IllustreArchitecte());
         }
         else {
-            // Mode multijoueur : plusieurs joueurs humains
             size_t nb_joueurs = dialogue->demanderNombreJoueurs(2, 4);
             std::set<std::string> pseudos_pris;
 
-            // au moins un joueur (pas que des IA)
             std::string pseudo = dialogue->demanderPseudo(pseudos_pris, 1);
 
-            // if (joueurIA) {
-            //      participants.push_back(new Joueur(new ControleurJoueurIA(pseudo, dialogue)));
-            // } else {
-            participants.push_back(new Joueur(new ControleurJoueurHumain(pseudo, dialogue)));
+            participants.push_back(new Joueur(new ControleurJoueur(pseudo, dialogue)));
             pseudos_pris.insert(pseudo);
 
             for (size_t i = 1; i < nb_joueurs; ++i) {
-                // bool joueurIA = dialogue->demanderSiJoueurIA()
-
                 std::string pseudo = dialogue->demanderPseudo(pseudos_pris, i + 1);
 
-                // if (joueurIA) {
-                //      participants.push_back(new Joueur(new ControleurJoueurIA(pseudo, dialogue)));
-                // } else {
-                participants.push_back(new Joueur(new ControleurJoueurHumain(pseudo, dialogue)));
+                participants.push_back(new Joueur(new ControleurJoueur(pseudo, dialogue)));
                 pseudos_pris.insert(pseudo);
-                // }
             }
         }
 
@@ -83,7 +66,15 @@ std::vector<IParticipant*> ControleurPartie::creerParticipants() {
 
 void ControleurPartie::initialiserPartie() {
     std::vector<IParticipant*> participants = creerParticipants();
-    partie = creerPartie(participants);
+    ModeScore mode;
+    int choix = dialogue->demanderModeScore();
+    switch (choix) {
+    case 1:  mode = ModeScore::Classique;
+    case 2:  mode = ModeScore::Variante;
+    case 3:  mode = ModeScore::Personnel;
+    default:  mode = ModeScore::Classique;
+    }
+    partie = creerPartie(participants, mode);
 
     std::set<std::string> pseudos = partie->getPseudosParticipants();
     size_t indice_architecte = dialogue->demanderArchitecteChef(pseudos);
@@ -108,26 +99,34 @@ void ControleurPartie::jouerManche() {
     partie->passerArchitecteChefSuivant();
 }
 
-void afficherResultats() {
+void ControleurPartie::afficherResultats() {
     dialogue->annoncerFinPartie();
+    dialogue->annoncerAffichageScore();
+
+    auto calculateur = ScoreRegistry::instance().create(partie->getModeScore(), partie->getVariante());
+
+    if (!calculateur) {
+        throw AkropolisException("Mode de score non enregistre dans le registre", "ControleurPartie");
+    }
 
     for (size_t i = 0; i < partie->getNbIParticipants(); ++i) {
         IParticipant* participant = partie->getIParticipant(i);
 
         if (participant->estJoueur()) {
             Joueur* joueur = dynamic_cast<Joueur*>(participant);
-            // int score = calculerScore(joueur->getCite());
-            dialogue->afficherMessage(joueur->getPseudo() + " : [score]");
+            ScoreBreakdown score = calculateur->compute(joueur->getCite().getGrille().getGrille(), joueur->getPierres());
+            dialogue->afficherScore(*joueur, score);
         }
         else {
             IllustreArchitecte* iA = dynamic_cast<IllustreArchitecte*>(participant);
-            // int score = calculerScore(joueur->getCite());
-            dialogue->afficherMessage(participant->getPseudo() + " : Adversaire");
+            // il est où le calcul du score de l'Illustre Architecte Nyla ????
+            ScoreBreakdown score;
+            dialogue->afficherScore(*iA, score);
         }
     }
 }
 
-void jouer() {
+void ControleurPartie::jouer() {
     dialogue->afficherEcranAccueil();
     bool reprendre_partie = dialogue->demanderReprisePartie();
 
@@ -155,6 +154,6 @@ void jouer() {
     }
 
     partie->terminer();
+
     afficherResultats();
 }
-};

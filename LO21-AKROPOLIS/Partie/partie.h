@@ -1,7 +1,13 @@
 #pragma once
 #include "../Joueur/joueur.h"
-
-// PROBLEME A REGLER : JOUEURS N'EST PAS INITIALISE ("'Partie::joueurs' : impossible d'initialiser le membre") -> ca fait buguer tout le reste
+#include "../Score/score.h"
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include "../exception.h"
+#include "../Pioche/pioche.h"
+#include "../Table/table.h"
 
 class Partie {
 private:
@@ -9,12 +15,14 @@ private:
     Pioche* pioche;
     Table* chantier;
     size_t indice_architecte_chef;
+    ModeScore modeActuel;
+    ActiveVariants variants;
     bool en_cours;
 
 public: 
     // Constructeur prenant les joueurs déjà créés
-    Partie(std::vector<IParticipant*> joueurs_init, Pioche* pioche_init, Table* table_init) : joueurs(joueurs_init), pioche(pioche_init), 
-        chantier(table_init), indice_architecte_chef(0), en_cours(false) {
+    Partie(std::vector<IParticipant*> joueurs_init, Pioche* pioche_init, Table* table_init, ModeScore mode) : joueurs(joueurs_init), pioche(pioche_init), 
+        chantier(table_init), indice_architecte_chef(0), en_cours(false), modeActuel(mode) {
         if (joueurs.empty()) {
             throw AkropolisException("Une partie doit avoir au moins un joueur", "Partie");
         }
@@ -65,6 +73,12 @@ public:
     const Table* getChantier() const { return chantier; }
     Table* getChantier() { return chantier; }
 
+    const ModeScore getModeScore() const { return modeActuel; }
+    ModeScore getModeScore() { return modeActuel; }
+
+    const ActiveVariants getVariante() const { return variants; }
+    ActiveVariants getVariante() { return variants; }
+
 
     void demarrer() {
         if (en_cours) {
@@ -82,13 +96,10 @@ public:
             throw std::out_of_range("Indice architecte invalide");
         }
         indice_architecte_chef = indice;
-        joueurs[indice]->setArchitecteChef(true);
     }
 
     void passerArchitecteChefSuivant() {
-        joueurs[indice_architecte_chef]->setArchitecteChef(false);
         indice_architecte_chef = (indice_architecte_chef + 1) % joueurs.size();
-        joueurs[indice_architecte_chef]->setArchitecteChef(true);
     }
 
     

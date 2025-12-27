@@ -1,8 +1,5 @@
-﻿#include "pioche.h"
-
-// ==============================      CODE AXEL    ==================================
-
-/*==========================  Tas  ==========================*/
+﻿#include "../Tuile/tuile.h"
+#include "pioche.h"
 
 
 Tas::Tas(int nbjoueurs) : nb_tuiles(static_cast<size_t>(nbjoueurs + 1)) {
@@ -13,8 +10,6 @@ Tas::~Tas() {} // pas de delete
 void Tas::pushTuile(const Tuile* t) {
 	if (tuiles.size() < nb_tuiles) tuiles.push_back(t);
 }
-
-/*=========================  Pioche  ========================*/
 
 
 void Pioche::ajouterTas(const Tas* t) {

@@ -1,4 +1,5 @@
 #include "grilleHexa.h"
+#include "../Tuile/tuile.h"
 #include <algorithm> // pour std::sort
 
 GrilleHexa::~GrilleHexa() = default;

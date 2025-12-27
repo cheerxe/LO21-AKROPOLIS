@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Tuile/tuile.h"
+class Tuile;
 
 class Tas {
 private:
