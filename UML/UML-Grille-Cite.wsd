@@ -1,0 +1,95 @@
+@startuml
+
+struct Coord {
+    + q: int
+    + r: int
+    + operator<(other: Coord): bool
+    + operator==(other: Coord): bool
+}
+
+class Hexagone{}
+
+abstract class GrilleHexa {
+    # grille: map<Coord, Hexagone>
+    - {static} directions(): vector<pair<int, int>>
+    + GrilleHexa()
+    + GrilleHexa(g: GrilleHexa)
+    + operator=(g: GrilleHexa): GrilleHexa
+    + ~GrilleHexa()
+    + minCoord(): Coord
+    + maxCoord(): Coord
+    + getGrille(): map<Coord, Hexagone>
+    + estLibre(c: Coord): bool
+    + {static} calculerPositionsTuile(centre: Coord, orientation: int): vector<Coord>
+    + placerTuile(tuile: Tuile, centre: Coord, orientation: int, sens: size_t) 
+    + retirerTuile(c1: Coord, c2: Coord, c3: Coord) 
+}
+
+abstract class GrilleHexa_Niveau {
+    - groupes_tuiles: vector<set<Coord>>
+    + GrilleHexa_Niveau()
+    + {abstract} peutPlacerTuile(centre: Coord, orientation: int): bool
+    + {abstract} toutesPositionsValides(): set<Coord>
+    + {abstract} toutesOrientationsValides(centre: Coord): set<int>
+    + memeTuile(a: Coord, b: Coord, c: Coord): bool
+    + placerTuile(tuile: Tuile, centre: Coord, orientation: int, sens: size_t) 
+    + retirerTuile(c1: Coord, c2: Coord, c3: Coord) 
+    + getGroupesTuiles(): vector<set<Coord>>
+}
+
+class GrilleHexa_Niv1 {
+    - initialiserGrilleDeBase() 
+    + GrilleHexa_Niv1()
+    + peutPlacerTuile(centre: Coord, orientation: int): bool
+    + toutesPositionsValides(): set<Coord>
+    + toutesOrientationsValides(centre: Coord): set<int>
+}
+
+class GrilleHexa_NivPlus {
+    - grille_precedente: GrilleHexa_Niveau*
+    + GrilleHexa_NivPlus(precedente: GrilleHexa_Niveau*)
+    + peutPlacerTuile(centre: Coord, orientation: int): bool
+    + toutesPositionsValides(): set<Coord>
+    + toutesOrientationsValides(centre: Coord): set<int>
+    + getGrillePrecedente(): GrilleHexa*
+}
+
+class GrilleHexa_Plate {
+    + GrilleHexa_Plate()
+    + placerHexagone(centre: Coord, hex: Hexagone)
+}
+
+class Cite {
+    - niv1: GrilleHexa_Niv1
+    - niveaux: vector<GrilleHexa_NivPlus*>
+    - grille_plate: GrilleHexa_Plate
+    - niveauSupPossible(): bool
+    - tousNiveauxDisponibles(): set<size_t>
+    + Cite()
+    + ~Cite()
+    + getGrille(): GrilleHexa_Plate
+    + getNiveauxDisponibles(): set<size_t>
+    + getPositionsValides(niv: size_t): set<Coord>
+    + getOrientationsPossibles(centre: Coord, niv: size_t): set<int>
+    + placerTuile(t: Tuile, niv: size_t, centre: Coord, orientation: int, sens: size_t)
+    + retirerTuile(niv: size_t, centre: Coord, orientation: int)
+    + getNiveaux(): vector<GrilleHexa_NivPlus*>
+}
+
+
+GrilleHexa <|-- GrilleHexa_Niveau
+GrilleHexa <|-- GrilleHexa_Plate
+GrilleHexa_Niveau <|-- GrilleHexa_Niv1
+GrilleHexa_Niveau <|-- GrilleHexa_NivPlus
+
+Coord "*" --o GrilleHexa
+Hexagone "*" --o GrilleHexa
+
+GrilleHexa_NivPlus o-- "1" GrilleHexa_Niveau
+
+GrilleHexa_Niv1 "1" --* Cite
+GrilleHexa_Plate "1" --* Cite
+GrilleHexa_NivPlus "1" --* Cite
+
+
+@enduml

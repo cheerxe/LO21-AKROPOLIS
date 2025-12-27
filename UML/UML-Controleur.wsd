@@ -1,0 +1,21 @@
+@startuml
+
+class ControleurPartie {
+    - partie: Partie*
+    - dialogue: IDialogueStrategy*
+    - creerPartie(participants: vector<IParticipant*>, ModeScore mode): Partie*
+    - creerParticipants(): vector<IParticipant*>
+    - initialiserPartie(): void
+    - jouerManche(): void
+    - afficherResultats(): void
+    + ControleurPartie(d: IDialogueStrategy*)
+    + ~ControleurPartie()
+    + jouer(): void
+}
+
+note top : void lancerPartie(IDialogueStrategy& dialogue) { \n    ControleurPartie controleur(&dialogue);\n    controleur.jouer();\n}
+
+ControleurPartie o-- "1" Partie
+ControleurPartie o-- "1" IDialogueStrategy
+
+@enduml

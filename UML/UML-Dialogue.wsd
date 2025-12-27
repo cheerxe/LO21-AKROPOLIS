@@ -1,0 +1,93 @@
+@startuml UML5_DialogueStrategy
+
+abstract class IDialogueStrategy {
+    + ~IDialogueStrategy()
+    + {abstract} afficherMessage(message: string): void
+    + {abstract} afficherErreur(message: string): void
+    + {abstract} afficherTuile(t: Tuile): void
+    + {abstract} afficherGrille(grille: GrilleHexa): void
+    + {abstract} afficherGrille(grille: GrilleHexa_Plate): void
+    + {abstract} annoncerNouvelleManche(): void
+    + {abstract} afficherArchitecte(archi: IParticipant): void
+    + {abstract} annoncerTourIParticipant(j: IParticipant): void
+    + {abstract} annoncerFinPartie(): void
+    + {abstract} annoncerAffichageScore(): void
+    + {abstract} afficherEcranAccueil(): void
+    + {abstract} demanderReprisePartie(): bool
+    + {abstract} demanderModeSolo(): bool
+    + {abstract} demanderNombreJoueurs(min: size_t, max: size_t): size_t
+    + {abstract} demanderPseudo(): string
+    + {abstract} demanderPseudo(pseudos_existants: set<string>, ind: size_t): string
+    + {abstract} demanderArchitecteChef(pseudos: set<string>): size_t
+    + {abstract} demanderTuileDansChantier(chantier: vector<Tuile>, pierres: size_t): size_t
+    + {abstract} afficherEtatActuelCite(cite: Cite): void
+    + {abstract} demanderNiveau(niveaux: set<size_t>): size_t
+    + {abstract} demanderPosition(positions_valides: set<Coord>, niv: size_t, grille_affichage: GrilleHexa_Plate): Coord
+    + {abstract} demanderOrientation(centre: Coord, orient_possible: set<int>, niv: size_t, grille_affichage: GrilleHexa_Plate): int
+    + {abstract} demanderSens(tuile: Tuile, orientation: int): size_t
+    + {abstract} demanderAnnulation(): int
+    + {abstract} demanderModeScore(): int
+    + {abstract} afficherScore(p: IParticipant&, score: ScoreBreakdown&)
+}
+
+class DialogueConsole {
+    + afficherMessage(message: string): void
+    + afficherErreur(message: string): void
+    + afficherTuile(t: Tuile): void
+    + afficherGrille(grille: GrilleHexa): void
+    + afficherGrille(grille: GrilleHexa_Plate): void
+    + annoncerNouvelleManche(): void
+    + afficherArchitecte(archi: IParticipant): void
+    + annoncerTourIParticipant(j: IParticipant): void
+    + annoncerFinPartie(): void
+    + annoncerAffichageScore(): void
+    + afficherEcranAccueil(): void
+    + demanderReprisePartie(): bool
+    + demanderModeSolo(): bool
+    + demanderNombreJoueurs(min: size_t, max: size_t): size_t
+    + demanderPseudo(): string
+    + demanderPseudo(pseudos_existants: set<string>, ind: size_t): string
+    + demanderArchitecteChef(pseudos: set<string>): size_t
+    + demanderTuileDansChantier(chantier: vector<Tuile>, pierres: size_t): size_t
+    + afficherEtatActuelCite(cite: Cite): void
+    + demanderNiveau(niveaux: set<size_t>): size_t
+    + demanderPosition(positions_valides: set<Coord>, niv: size_t, grille_affichage: GrilleHexa_Plate): Coord
+    + demanderOrientation(centre: Coord, orient_possible: set<int>, niv: size_t, grille_affichage: GrilleHexa_Plate): int
+    + demanderSens(tuile: Tuile, orientation: int): size_t
+    + demanderAnnulation(): int
+    + demanderModeScore(): int
+    + afficherScore(p: IParticipant&, score: ScoreBreakdown&)
+}
+
+namespace DialogueUtilisateur {
+    class DialogueUtilisateur <<namespace>> {
+        + gestionErreurBuffer(): void
+        + afficherOptions<T>(options: set<T>): void
+        + afficherMenu<T>(options: set<T>): void
+        + afficherMenu<T>(options: vector<T>): void
+        + demanderTexte<T>(question: string): T
+        + demanderChoixNumerique<T>(question: string, min: T, max: T): T
+        + demanderChoixParmi<T>(question: string, options: set<T>): T
+        + demanderChoixDansEnsemble<T>(question: string, options: set<T>): T
+        + demanderChoixDansMenu<T>(question: string, options: set<T>): size_t
+        + demanderChoixDansMenu<T>(question: string, options: vector<T>): size_t
+        + demanderConfirmation(question: string): int
+        + obtenirValeurParIndex<T>(options: set<T>, index: size_t): T
+        + afficherMessage(message: string): void
+        + afficherErreur(message: string): void
+        + afficherDansBanderole(message: string): void
+        + afficherDansBande(message: string): void
+    }
+}
+
+namespace DialogueUtilisateurQt {
+    class DialogueUtilisateurQt <<namespace>> {}
+  }
+
+IDialogueStrategy <|-- DialogueConsole
+DialogueConsole ..> DialogueUtilisateur : <<use>>
+
+IDialogueStrategy <|-- DialogueQt
+DialogueQt ..> DialogueUtilisateurQt : <<use>>
+
+@enduml
