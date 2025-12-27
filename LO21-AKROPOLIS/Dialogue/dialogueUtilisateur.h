@@ -144,7 +144,7 @@ namespace DialogueUtilisateur {
 
     // Question dans Menu
     template<typename T>
-    int demanderChoixDansMenu(const std::string& question, const std::set<T>& options) {
+    size_t demanderChoixDansMenu(const std::string& question, const std::set<T>& options) {
         int choix;
         size_t n = options.size();
         while (true) {
@@ -154,6 +154,26 @@ namespace DialogueUtilisateur {
             std::cin >> choix;
 
             if (std::cin.fail() || choix < 1 || choix > n ) {
+                gestionErreurBuffer();
+                std::cout << "Choix invalide. Veuillez entrez un nombre entre 1 et " << n << " : ";
+            }
+            else {
+                return choix;
+            }
+        }
+    }
+
+    template<typename T>
+    size_t demanderChoixDansMenu(const std::string& question, const std::vector<T>& options) {
+        int choix;
+        size_t n = options.size();
+        while (true) {
+            std::cout << question;
+            afficherMenu(options);
+            std::cout << "\nChoix : ";
+            std::cin >> choix;
+
+            if (std::cin.fail() || choix < 1 || choix > n) {
                 gestionErreurBuffer();
                 std::cout << "Choix invalide. Veuillez entrez un nombre entre 1 et " << n << " : ";
             }
@@ -198,6 +218,12 @@ namespace DialogueUtilisateur {
         std::cerr << "Erreur : " << erreur << std::endl;
     }
 
+
+    inline void afficherDansBanderole(const std::string& message) {
+        std::cout << "\n" << std::string(120, '=') << std::endl;
+        std::cout << std::string(50, ' ') << message << std::endl;
+        std::cout << std::string(120, '=') << std::endl;
+
     inline std::string demanderPseudoValide(const std::set<std::string>& pseudos_existants, const std::string& message) {
         std::string pseudo;
         while (true) {
@@ -220,3 +246,9 @@ namespace DialogueUtilisateur {
         }
     }
 }
+
+inline void afficherDansBande(const std::string& message) {
+    std::string space = std::string((120 - message.size()) / 2, ' ');
+    std::cout << "\n" << std::string(50, '=') << space << message << space << std::string(50, '=') << std::endl;
+}
+};
