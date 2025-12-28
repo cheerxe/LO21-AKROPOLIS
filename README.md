@@ -58,7 +58,7 @@ La communication était insuffisante : peu de visibilité sur l'avancement réel
 
 **Gestion d'équipe** : répartir les tâches selon les compétences. Ne pas laisser quelqu'un bloquer seul plus de 24h. Pratiquer le pair programming et les revues de code systématiques.
 
-Ce projet n'a pas atteint ses objectifs techniques mais représente un succès pédagogique majeur. J'ai appris l'importance cruciale de l'organisation, du leadership et de la rigueur dans le pilotage d'un projet collectif. L'échec n'est un échec que si on n'en tire aucune leçon.
+Ce projet n'a pas atteint ses objectifs techniques mais je le considère comme un succès pédagogique. J'ai appris l'importance de l'organisation, du leadership et de la rigueur dans le pilotage d'un projet collectif. 
 
 ## Note finale
 
